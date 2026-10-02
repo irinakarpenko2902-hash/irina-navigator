@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ирина Ведова-Вестерова — Стратег-Навигатор</title>
+<meta name="description" content="">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="Ирина Ведова-Вестерова — Стратег-Навигатор">
+<meta property="og:description" content="">
+<meta property="og:type" content="website">
+
+
+
+<link rel="stylesheet" href="style.css">
+<style>
+:root {
+  --шрифт-заголовков: Oswald, system-ui, sans-serif;
+  --шрифт-текста: Manrope, system-ui, sans-serif;
+  --цвет-фон: #F4F0E8;  --цвет-фон-2: #EDE7DB;  --цвет-фон-карточки: #F4F0E8;
+  --цвет-текст: #17212B;  --цвет-текст-мягкий: #66727A;  --цвет-текст-тихий: #686E70;
+  --цвет-акцент: #C66A4A;  --цвет-акцент-тёмный: #B05A3D;  --цвет-акцент-яркий: #D97E5B;  --цвет-акцент-глубже: #A6573B;  --цвет-акцент-маркер: #B75F41;
+  --цвет-на-акценте: #F4F0E8;  --цвет-линия: #D8D2C4;
+  --цвет-тёмный-фон: #17212B;  --цвет-тёмный-фон-2: #1E2A37;  --цвет-тёмный-текст: #F4F0E8;  --цвет-тёмный-фон-3: #1A2530;  --цвет-тёмный-фон-4: #17212B;
+  --цвет-тёплый: #C66A4A;  --цвет-тёплый-мягкий: #E3B7A2;
+  --цвет-стекло: color-mix(in srgb, #17212B 86%, transparent);
+  --тень: 0 12px 34px color-mix(in srgb, #17212B 6%, transparent);
+  --тень-чип: 0 10px 30px color-mix(in srgb, #17212B 12%, transparent);
+  --тень-глубокая: 0 24px 60px color-mix(in srgb, #17212B 35%, transparent);
+  --тень-спутник: 0 30px 60px color-mix(in srgb, #17212B 70%, transparent);
+  --тень-плиты: 0 40px 100px color-mix(in srgb, #17212B 70%, transparent);
+  --кегль-h1: 33px;  --кегль-h2: clamp(28px, 4.5vw, 44px);
+  --кегль-текст: clamp(16px, 1vw, 17px);  --кегль-лид: clamp(17px, 1.1vw, 18px);
+  --кегль-мелкий: 14px;  --кегль-кикер: clamp(14px, 1.1vw, 15px);
+  --кегль-цифра: 30px;  --разрядка-кикера: .03em;
+  --отступ-секции: clamp(56px, 9vw, 120px);  --отступ-блока: clamp(16px, 2vw, 28px);
+  --отступ-секции-тихо: clamp(44px, 7vw, 94px);  --отступ-секции-громко: clamp(64px, 10.5vw, 140px);
+  --ширина: 1120px;  --ширина-колонки: 560px;  --радиус: 16px;  --радиус-малый: 8px;
+  --радиус-карточки: 18px;  --радиус-плитки: 22px;  --радиус-телефон: 46px;  --кнопка-радиус: 14px;
+  --радиус-модуля: 16px;  --нить: 2px;
+  --плавность: cubic-bezier(.2, .7, .2, 1);  --длительность: .25s;
+}
+@media (min-width: 900px) {
+  :root { --кегль-h1: clamp(44px, 4vw, 58px); }
+}
+</style>
+<script>
+(function () {
+  var ЭТАЛОН = 0.535;                  // очко Open Sans — текстовой гарнитуры утверждённых макетов
+  var ПОТОЛОК = 1.2, МЁРТВАЯ = 0.02;   // выше потолка расползается раскладка; ближе к единице не трогаем вовсе
+  var КОМПЬЮТЕР = "(min-width: 900px)";
+  var ТОКЕНЫ = ["--кегль-текст", "--кегль-лид", "--кегль-мелкий", "--кегль-кикер"];
+  var корень = document.documentElement;
+  var холст = document.createElement("canvas").getContext("2d");
+  var ждём = 0;
+
+  function мера(буква) { var м = холст.measureText(буква); return (м && м.actualBoundingBoxAscent) || 0; }
+
+  function применить() {
+    ждём = 0;
+    if (!холст) { return; }
+
+    for (var i = 0; i < ТОКЕНЫ.length; i++) { корень.style.removeProperty(ТОКЕНЫ[i]); }
+    var стиль = getComputedStyle(корень), стек = стиль.getPropertyValue("--шрифт-текста").trim();
+    if (!стек) { return; }
+    холст.font = "400 100px " + стек;
+
+    var очко = Math.max(мера("х"), мера("x")) / 100;
+    if (!(очко > 0)) { return; }
+    var k = Math.round(Math.min(ПОТОЛОК, Math.max(1, ЭТАЛОН / очко)) * 1000) / 1000;
+    if (k - 1 < МЁРТВАЯ || !matchMedia(КОМПЬЮТЕР).matches) { k = 1; }
+    корень.setAttribute("data-очко", очко.toFixed(3));      // чтобы проверка могла сказать числа вслух
+    корень.setAttribute("data-поправка", k.toFixed(3));
+    if (k === 1) { return; }
+    for (i = 0; i < ТОКЕНЫ.length; i++) {
+      var было = стиль.getPropertyValue(ТОКЕНЫ[i]).trim();
+      if (было) { корень.style.setProperty(ТОКЕНЫ[i], "calc((" + было + ") * " + k + ")"); }
+    }
+  }
+
+  применить();
+
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(применить); }
+
+  addEventListener("resize", function () { ждём = ждём || requestAnimationFrame(применить); });
+})();
+</script>
+<style>@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/xn7_YHE41ni1AdIRqAuZuw1Bx9mbZk79FO_F.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/xn7_YHE41ni1AdIRqAuZuw1Bx9mbZk4jE-_F.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvgUE.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/TK3_WkUHHAIjg75cFRf3bXL8LICs1y9ogUE.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/TK3_WkUHHAIjg75cFRf3bXL8LICs1xZogUE.ttf) format('truetype');
+}
+
+@media(min-width:900px) {
+ #экран-1.первый-экран--центр .центр__верх, #экран-1.первый-экран--центр .центр__бок { position:static!important; inset:auto!important; transform:none!important; width:100%!important; max-width:960px; text-align:center; }
+ #экран-1.первый-экран--центр .центр__верх { order:0; }
+ #экран-1.первый-экран--центр .центр__бок--лево { order:1; }
+ #экран-1.первый-экран--центр .центр__бок--право { order:2; }
+ #экран-1.первый-экран--центр .первый-экран__картинка { order:3; align-self:center; }
+ #экран-1.первый-экран--центр .блок__внутри { display:flex; flex-direction:column; align-items:center; padding:80px 24px 24px; gap:18px; }
+ #экран-1.первый-экран--центр .первый-экран__текст { position:relative; width:100%; max-width:960px; text-align:center; }
+ #экран-1.первый-экран--центр h1 { font-size:var(--кегль-h1)!important; margin:18px 0; }
+ #экран-1.первый-экран--центр .хвост { font-size:inherit!important; }
+ #экран-1.первый-экран--центр .лид, #экран-1.первый-экран--центр .первый-экран__действие, #экран-1.первый-экран--центр .первый-экран__доверие { position:static; width:auto; max-width:760px; margin:12px auto; }
+ #экран-1.первый-экран--центр .первый-экран__картинка { position:relative; inset:auto; transform:none; width:300px; height:260px; margin:0; }
+ #экран-1.первый-экран--центр .первый-экран__картинка img { width:100%; height:100%; object-fit:cover; object-position:center; }
+}
+#экран-1 .кикер { white-space:normal; max-width:100%; border-radius:var(--радиус-малый); }
+#экран-1 .лид { color:var(--цвет-текст); }
+#экран-1.тёмный .лид { color:var(--цвет-тёмный-текст); }
+#экран-1.тёмный .кикер { color:var(--цвет-тёплый-мягкий); }
+.кнопка--главная, #экран-1.тёмный .кнопка--главная { background:var(--цвет-акцент-глубже)!important; color:var(--цвет-тёмный-текст)!important; animation:none; }
+#экран-1 .первый-экран__доверие { color:var(--цвет-текст); }
+#экран-1.тёмный .первый-экран__доверие { color:var(--цвет-тёмный-текст); }
+@media(max-width:899px) {
+ #экран-1 { min-height:0; padding-bottom:var(--отступ-блока); }
+ #экран-1 .блок__внутри { width:100%; min-width:0; padding:16px; gap:16px; }
+ #экран-1 .первый-экран__текст { width:100%; min-width:0; }
+ #экран-1 .кикер { font-size:14px; line-height:1.35; }
+ #экран-1 h1 { font-size:var(--кегль-h1)!important; line-height:1.12!important; overflow-wrap:break-word; }
+ #экран-1 h1 .хвост { font-size:inherit!important; }
+ #экран-1 .лид { font-size:16px; line-height:1.5; }
+ #экран-1 .первый-экран__картинка { position:relative; width:100%; height:190px; max-height:190px; margin:0; }
+ #экран-1 .первый-экран__картинка img { height:100%; width:100%; object-fit:cover; object-position:50% 30%; }
+ #экран-1.первый-экран--разворот .первый-экран__картинка { order:2; }
+ #экран-1 .первый-экран__действие { margin-top:16px; }
+ #экран-1 .первый-экран__доверие { margin-top:12px; }
+ #экран-1 .кнопка { width:100%; min-height:48px; }
+}
+</style><style>
+#экран-1 { --шрифт-заголовков: Manrope, system-ui, sans-serif; }
+#экран-1 h1 { font-weight:600; font-size:clamp(36px,3.2vw,46px)!important; line-height:1.16!important; letter-spacing:-.025em; }
+#экран-1 h1 .хвост { font-size:inherit!important; }
+#экран-1 .точка-маршрута { display:inline-block; flex:0 0 8px; width:8px; height:8px; border-radius:50%; background:var(--цвет-акцент); margin-top:6px; }
+#экран-1 .кикер { background:transparent; border:0; box-shadow:none; padding:0; color:var(--цвет-текст); border-radius:0; }
+#экран-1 .маршрут { position:absolute; left:4%; bottom:8%; width:85%; height:120px; color:var(--цвет-акцент); opacity:.32; pointer-events:none; z-index:0; }
+#экран-1 .первый-экран__текст, #экран-1 .шапка { z-index:2; }
+#экран-1 .первый-экран__картинка { z-index:1; }
+#экран-1 .пятно { opacity:.3; }
+@media(min-width:900px) {
+ #экран-1 .кикер { font-size:16px; font-weight:600; }
+}
+@media(max-width:899px) {
+ #экран-1 .первый-экран__доверие { margin-top:24px!important; margin-bottom:20px; }
+ #экран-1 .маршрут { left:4%; bottom:4px; width:92%; height:24px; opacity:.4; }
+ #экран-1 .первый-экран__картинка img { border-radius:var(--радиус-карточки); }
+ #экран-1 .кикер { font-size:14px; line-height:1.4; }
+ #экран-1 h1 { margin-top:16px; font-size:28px!important; line-height:1.22!important; }
+}
+</style><style>:root{--шрифт-заголовков:Manrope,system-ui,sans-serif}</style><style>#экран-04 .кнопка{background:var(--цвет-акцент-глубже);color:var(--цвет-тёмный-текст);animation:none}</style><style>#экран-08 .кнопка{background:var(--цвет-акцент-глубже);color:var(--цвет-тёмный-текст);border:2px solid var(--цвет-тёплый-мягкий);animation:none}</style></head>
+<body class="с-липкой-кнопкой">
+<section class="блок блок--первый-экран первый-экран--разворот светлый" id="экран-1" data-тип="первый-экран" data-схема="разворот" data-ключ-макета="светлая" data-картинка="фото">
+  <header class="шапка">
+    <a class="шапка__лого" href="#">Ирина Ведова-Вестерова</a>
+  </header>
+  <span class="пятно пятно--1"></span><span class="пятно пятно--2"></span>
+  <svg class="маршрут" viewBox="0 0 1000 120" fill="none" aria-hidden="true" focusable="false"><path d="M20 85 H330 Q370 85 395 60 L440 30 Q455 20 480 20 H960" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 8"/><circle cx="20" cy="85" r="4" fill="currentColor"/><circle cx="960" cy="20" r="5" fill="currentColor"/></svg><div class="блок__внутри">
+    <div class="первый-экран__текст">
+      <p class="кикер">Стратег-Навигатор по развитию экспертных проектов</p>
+      <h1>Когда прежний маршрут перестал работать<span class="делитель"> —</span> <span class="хвост">помогу понять почему и найти <em class="акцент">новый.</em></span></h1>
+      <p class="лид">Анализирую аудиторию, продукт, позиционирование и маркетинг, чтобы найти причину проблемы и определить, <strong>что менять в первую очередь</strong>.</p>
+      
+      <div class="первый-экран__действие"><a class="кнопка кнопка--главная" href="https://vk.me/vedoveste">Обсудить проект</a></div>
+      <p class="мелкий первый-экран__доверие"><span class="точка-маршрута" aria-hidden="true"></span> Для зрелых экспертных проектов и предпринимателей с личным брендом.</p>
+    </div>
+    <figure class="картинка картинка--фото картинка--край первый-экран__картинка" style="--лицо-в-кадре: .22">
+      <picture><source media="(max-width: 899px)" srcset="portrait-natural-preview.webp"><img src="portrait-natural-preview.webp" alt="Когда прежний маршрут перестал работать помогу понять почему и найти новый." data-лицо="50,22" fetchpriority="high"></picture>
+    </figure>
+  </div>
+</section>
+
+<div class="липкая-кнопка"><a class="кнопка кнопка--главная" href="https://vk.me/vedoveste">Обсудить проект</a></div>
+<script>
+(function () {
+  var СПИТ = "главная-на-виду";                       // класс на body; правило сна — в стилях
+  var кнопка = document.querySelector(".первый-экран__действие .кнопка--главная");
+  if (!кнопка || !window.IntersectionObserver) { return; }
+
+  function пометить(на_виду) { document.body.classList.toggle(СПИТ, !!на_виду); }
+
+  var б = кнопка.getBoundingClientRect();
+  пометить(б.bottom > 0 && б.top < (window.innerHeight || 0));
+
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { document.body.classList.add("панель-с-переходом"); });
+  });
+
+  new IntersectionObserver(function (записи) {
+    пометить(записи[записи.length - 1].isIntersecting);
+  }, { threshold: 0 }).observe(кнопка);
+})();
+</script>
+<section class="блок блок--боль блок--тихо ключ--глубже светлый фон--сетка" id="экран-02" data-тип="боль" data-вёрстка="своя">
+<style>
+#экран-02 { position:relative; padding:var(--отступ-секции) 24px; overflow:hidden; }
+#экран-02.светлый { background:var(--цвет-фон-2); color:var(--цвет-текст); }
+#экран-02.тёмный { background:var(--цвет-тёмный-фон-2); color:var(--цвет-тёмный-текст); }
+#экран-02 .содержание { max-width:var(--ширина); margin:auto; position:relative; z-index:1; }
+#экран-02 .секция__шапка { max-width:800px; margin-bottom:var(--отступ-блока); }
+#экран-02 h2 { font-size:var(--кегль-h2); line-height:1.18; font-weight:600; margin:0 0 24px; }
+#экран-02 .секция__лид { max-width:720px; font-size:var(--кегль-лид); line-height:1.65; }
+#экран-02 .ситуации { display:grid; grid-template-columns:1fr 1fr; gap:0 48px; list-style:none; padding:0; margin:32px 0 40px; }
+#экран-02 .роль { padding:20px 0; background:transparent; box-shadow:none; border:0; border-radius:var(--радиус-малый); border-bottom:1px solid var(--цвет-линия); font-size:var(--кегль-текст); line-height:1.6; }
+#экран-02.светлый .секция__лид { color:var(--цвет-текст); }
+#экран-02.тёмный .секция__лид { color:var(--цвет-тёмный-текст); }
+#экран-02 .роль:first-child { grid-column:auto; }
+#экран-02 .роль::before { content:'—'; color:var(--цвет-акцент-глубже); margin-right:12px; }
+#экран-02 .поворот { max-width:800px; padding:4px 0 4px 24px; border-left:2px solid var(--цвет-акцент-глубже); }
+#экран-02 .поворот p { font-size:var(--кегль-текст); line-height:1.45; margin:8px 0; }
+#экран-02 .поворот .вопрос { font-size:var(--кегль-h2); line-height:1.2; margin-top:16px; font-weight:600; }
+#экран-02 .ветви { position:absolute; width:480px; height:300px; right:-100px; bottom:0; color:var(--цвет-акцент); opacity:.2; pointer-events:none; }
+@media(max-width:899px) {
+ #экран-02 { padding:var(--отступ-секции-тихо) 20px; }
+ #экран-02 .ситуации { grid-template-columns:1fr; gap:0; margin:24px 0 32px; }
+ #экран-02 .роль { padding:13px 0; }
+ #экран-02 .поворот { padding-left:18px; }
+ #экран-02 .ветви { width:220px; height:150px; right:-80px; bottom:0; opacity:.12; }
+}
+</style>
+<svg class="ветви" viewBox="0 0 480 300" fill="none" aria-hidden="true"><path d="M20 280V200Q20 170 60 160L440 80M60 160Q160 140 220 60L260 10M60 160Q140 160 230 200L460 250" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 8"/><circle cx="20" cy="280" r="4" fill="currentColor"/><circle cx="440" cy="80" r="4" fill="currentColor"/><circle cx="260" cy="10" r="4" fill="currentColor"/></svg>
+<div class="содержание">
+ <div class="секция__шапка">
+  <h2>Вроде всё на месте. Но что-то изменилось</h2>
+  <p class="секция__лид">У проекта есть продукт, аудитория, контент и продажи. Команда работает. Продвижение продолжается. Но:</p>
+ </div>
+ <ul class="ситуации">
+  <li class="роль">то, что раньше приносило результат, работает хуже;</li>
+  <li class="роль">аудитория реагирует иначе;</li>
+  <li class="роль">продажи просели, а очевидной причины нет;</li>
+  <li class="роль">действий становится больше, а ясности — меньше;</li>
+  <li class="роль">старое позиционирование уже не соответствует тому, чем стал проект;</li>
+  <li class="роль">появляется ощущение, что рынок изменился, а вы пока не поняли — <strong>как именно</strong>.</li>
+ </ul>
+ <div class="поворот">
+  <p>В такой ситуации я не начинаю с вопроса:</p>
+  <p><strong>«Что ещё запустить?»</strong></p>
+  <p>Сначала нужно понять:</p>
+  <p class="вопрос">Что изменилось — и почему.</p>
+ </div>
+</div>
+</section>
+<section class="блок блок--решение блок--тихо ключ--наоборот тёмный фон--сетка" id="экран-03" data-тип="решение" data-вёрстка="своя">
+<style>
+#экран-03 { padding:var(--отступ-секции) 24px; position:relative; }
+#экран-03.тёмный { background:var(--цвет-тёмный-фон); color:var(--цвет-тёмный-текст); }
+#экран-03.светлый { background:var(--цвет-фон); color:var(--цвет-текст); }
+#экран-03 .метод { max-width:var(--ширина); margin:auto; position:relative; }
+#экран-03 .введение { text-align:center; max-width:880px; margin:0 auto 48px; }
+#экран-03 h2 { font-size:var(--кегль-h2); line-height:1.2; font-weight:600; margin:0 0 28px; }
+#экран-03 .введение p { font-size:var(--кегль-текст); line-height:1.65; margin:18px 0; }
+#экран-03 .связи { color:var(--цвет-тёплый-мягкий); }
+#экран-03.светлый .связи { color:var(--цвет-акцент-глубже); }
+#экран-03 .этапы { display:grid; grid-template-columns:repeat(3,1fr); gap:40px; list-style:none; padding:0; margin:0; position:relative; }
+#экран-03 .траектория { position:absolute; top:0; left:22px; width:calc(66.666% + 4px); height:44px; color:var(--цвет-тёплый-мягкий); opacity:.65; pointer-events:none; }
+#экран-03 .этап { position:relative; }
+#экран-03 .координата { width:44px; height:44px; border:1px solid var(--цвет-тёплый-мягкий); border-radius:50%; display:grid; place-items:center; font-size:var(--кегль-текст); position:relative; margin-bottom:24px; }
+#экран-03.тёмный .координата { background:var(--цвет-тёмный-фон); color:var(--цвет-тёплый-мягкий); }
+#экран-03.светлый .координата { background:var(--цвет-фон); color:var(--цвет-акцент-глубже); border-color:var(--цвет-акцент-глубже); }
+#экран-03 h3 { font-size:var(--кегль-лид); font-weight:600; margin:0 0 14px; }
+#экран-03 .этап p { font-size:var(--кегль-текст); line-height:1.65; margin:0; }
+#экран-03 .итог { margin-top:48px; border-top:1px solid color-mix(in srgb,var(--цвет-тёплый-мягкий) 30%,transparent); padding-top:32px; }
+#экран-03 .итог p { font-size:var(--кегль-лид); font-weight:600; line-height:1.5; margin:0 0 24px; }
+#экран-03 .вопросы { display:grid; grid-template-columns:repeat(3,1fr); gap:40px; font-size:var(--кегль-h2); line-height:1.3; }
+#экран-03 .вопросы strong { font-weight:600; }
+#экран-03 .вопросы strong:not(:last-child)::after { content:' →'; color:var(--цвет-тёплый-мягкий); }
+@media(max-width:899px) {
+ #экран-03 { padding:var(--отступ-секции-тихо) 20px; }
+ #экран-03 .введение { text-align:left; margin-bottom:24px; }
+ #экран-03 .введение p { margin:12px 0; line-height:1.5; }
+ #экран-03 .введение .связи { font-size:var(--кегль-текст); line-height:1.4; }
+ #экран-03 .этапы { grid-template-columns:1fr; gap:28px; }
+ #экран-03 .траектория { display:none; }
+ #экран-03 .этап { display:grid; grid-template-columns:44px 1fr; column-gap:18px; }
+ #экран-03 .координата { grid-row:1/3; margin:0; }
+ #экран-03 .этап h3 { grid-column:2; }
+ #экран-03 .этап p { grid-column:2; }
+ #экран-03 .итог { margin-top:32px; padding-top:24px; }
+ #экран-03 .вопросы { grid-template-columns:1fr; gap:16px; font-size:var(--кегль-лид); }
+ #экран-03 .вопросы strong:not(:last-child)::after { content:''; }
+}
+</style>
+<div class="метод">
+ <div class="введение">
+  <h2>Не ищу волшебную кнопку. Ищу причину</h2>
+  <p>Я смотрю на проект как на систему и соединяю то, что часто анализируют отдельно:</p>
+  <p class="связи">аудитория → продукт → рынок → конкуренты → позиционирование → коммуникации → история проекта</p>
+  <p>Ищу точки, <strong>где система перестала совпадать сама с собой</strong>.</p>
+ </div>
+ <ol class="этапы" aria-label="Сигналы → Диагностика → Траектория">
+  <svg class="траектория" viewBox="0 0 800 44" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M0 22H130Q150 22 170 12H230Q250 12 270 22H400H530Q550 22 570 32H630Q650 32 670 22H800" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 7"/></svg>
+  <li class="этап"><span class="координата" aria-hidden="true">1</span><h3>Сигналы</h3><p>Что уже говорят аудитория, рынок, цифры, отзывы, продажи и поведение клиентов.</p></li>
+  <li class="этап"><span class="координата" aria-hidden="true">2</span><h3>Диагностика</h3><p>Что является настоящей причиной проблемы, а что — только её симптомом.</p></li>
+  <li class="этап"><span class="координата" aria-hidden="true">3</span><h3>Траектория</h3><p>Что сохранить, что изменить, от чего отказаться и что проверить первым.</p></li>
+ </ol>
+ <div class="итог"><p>Результат — не ещё один список маркетинговых идей, а ясность:</p><div class="вопросы"><strong>Что происходит?</strong><strong>Почему это происходит?</strong><strong>Куда двигаться дальше?</strong></div></div>
+</div>
+</section>
+<section class="блок блок--прайс-лист ключ--основной светлый фон--пятна" id="экран-04" data-тип="прайс-лист" data-вёрстка="своя">
+<style>
+#экран-04 { padding:var(--отступ-секции) 24px; position:relative; overflow:hidden; }
+#экран-04.светлый { background:var(--цвет-фон); color:var(--цвет-текст); }
+#экран-04.тёмный { background:var(--цвет-тёмный-фон); color:var(--цвет-тёмный-текст); }
+#экран-04 .диагностика { max-width:var(--ширина); margin:auto; position:relative; }
+#экран-04 .предложение { display:grid; grid-template-columns:1.25fr .75fr; gap:64px; align-items:start; }
+#экран-04 .кикер { background:transparent; padding:0; border:0; color:var(--цвет-акцент-глубже); font-size:var(--кегль-кикер); margin:0 0 18px; }
+#экран-04.тёмный .кикер { color:var(--цвет-тёплый-мягкий); }
+#экран-04 h2 { font-size:var(--кегль-h2); font-weight:600; line-height:1.2; margin:0 0 24px; }
+#экран-04 .описание { font-size:var(--кегль-лид); line-height:1.6; margin:0; }
+#экран-04 .стоимость { border-left:2px solid var(--цвет-акцент); padding:24px 0 24px 28px; }
+#экран-04 .координаты { width:100%; max-width:260px; height:90px; color:var(--цвет-акцент-глубже); }
+#экран-04.тёмный .координаты { color:var(--цвет-тёплый-мягкий); }
+#экран-04 .цена { font-size:var(--кегль-цифра); font-weight:600; margin:20px 0 24px; }
+#экран-04 .состав { display:grid; grid-template-columns:repeat(2,1fr); gap:0 48px; list-style:none; margin:40px 0; padding:0; }
+#экран-04 .состав li { font-size:var(--кегль-лид); line-height:1.6; padding:20px 0; border-bottom:1px solid var(--цвет-линия); }
+#экран-04 .состав li::before { content:'—'; color:var(--цвет-акцент-глубже); margin-right:12px; }
+#экран-04 .результат { padding:32px; border-radius:var(--радиус-карточки); }
+#экран-04.светлый .результат { background:var(--цвет-фон-2); color:var(--цвет-текст); }
+#экран-04.тёмный .результат { background:var(--цвет-тёмный-фон-2); color:var(--цвет-тёмный-текст); }
+#экран-04 .результат p { font-size:var(--кегль-текст); line-height:1.6; margin:0 0 18px; }
+#экран-04 .результат .выход { font-size:var(--кегль-цифра); line-height:1.35; font-weight:600; }
+#экран-04 .результат p:last-child { margin-bottom:0; }
+@media(max-width:899px) {
+ #экран-04 { padding:var(--отступ-секции-тихо) 20px; }
+ #экран-04 .диагностика { display:flex; flex-direction:column; }
+ #экран-04 .предложение { display:contents; }
+ #экран-04 .предложение > div:first-child { order:0; }
+ #экран-04 .состав { order:1; }
+ #экран-04 .результат { order:2; }
+ #экран-04 .стоимость { order:3; margin-top:28px; }
+ #экран-04 .результат .выход { font-size:var(--кегль-лид); }
+ #экран-04 .стоимость { padding:0 0 0 20px; }
+ #экран-04 .координаты { height:60px; max-width:200px; }
+ #экран-04 .цена { margin:16px 0 20px; }
+ #экран-04 .состав { grid-template-columns:1fr; margin:28px 0; }
+ #экран-04 .результат { padding:24px; }
+ #экран-04 .стоимость .кнопка { width:100%; }
+}
+</style>
+<div class="диагностика">
+ <div class="предложение">
+  <div><p class="кикер">Основной формат работы</p><h2>Диагностика проекта</h2><p class="описание">Когда прежняя модель перестала давать прежний результат, важно не добавлять ещё один инструмент, а понять, <strong>что именно изменилось и где искать причину</strong>.</p></div>
+  <div class="стоимость"><svg class="координаты" viewBox="0 0 260 90" fill="none" aria-hidden="true"><path d="M5 70H75Q95 70 110 45L130 25H255" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 7"/><circle cx="130" cy="25" r="7" fill="currentColor"/><path d="M130 8V0M130 50V42M112 25H104M155 25H147" stroke="currentColor" stroke-width="1.5"/></svg><p class="цена">от 45 000 ₽</p><a class="кнопка" href="https://vk.me/vedoveste">Обсудить диагностику</a></div>
+ </div>
+ <ul class="состав"><li>аудиторию и изменение её поведения;</li><li>продукт и его соответствие сегодняшнему запросу;</li><li>позиционирование;</li><li>маркетинг и коммуникации;</li><li>конкурентов и изменения рынка;</li><li>историю проекта и прежние точки роста.</li></ul>
+ <div class="результат"><p>В результате вы получаете:</p><p class="выход"><strong>ясную картину ситуации + ключевые причины + карту изменений</strong></p><p>Становится понятно:</p><p><strong>что сохранить → что изменить → что усилить → что проверить → что делать первым.</strong></p></div>
+</div>
+</section>
+<section class="блок блок--прайс-лист блок--тихо ключ--глубже светлый фон--сетка" id="экран-05" data-тип="прайс-лист" data-вёрстка="своя">
+<style>
+#экран-05 { padding:var(--отступ-секции) 24px; }
+#экран-05.светлый { background:var(--цвет-фон-2); color:var(--цвет-текст); }
+#экран-05.тёмный { background:var(--цвет-тёмный-фон-2); color:var(--цвет-тёмный-текст); }
+#экран-05 .форматы { max-width:var(--ширина); margin:auto; position:relative; }
+#экран-05 h2 { font-size:var(--кегль-h2); font-weight:600; line-height:1.2; margin:0 0 40px; }
+#экран-05 .карточки { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+#экран-05 .формат { padding:28px; border-radius:var(--радиус-карточки); display:flex; flex-direction:column; position:relative; }
+#экран-05.светлый .формат { background:var(--цвет-фон-карточки); color:var(--цвет-текст); }
+#экран-05.тёмный .формат { background:var(--цвет-тёмный-фон); color:var(--цвет-тёмный-текст); }
+#экран-05 .маркер { color:var(--цвет-акцент-глубже); font-size:var(--кегль-кикер); margin-bottom:24px; display:flex; align-items:center; gap:12px; }
+#экран-05.тёмный .маркер { color:var(--цвет-тёплый-мягкий); }
+#экран-05 .маркер::after { content:''; width:48px; border-top:1px dashed currentColor; }
+#экран-05 h3 { font-size:var(--кегль-лид); line-height:1.4; font-weight:600; margin:0 0 20px; }
+#экран-05 .описание { font-size:var(--кегль-текст); line-height:1.65; margin:0 0 28px; }
+#экран-05 .цена { font-size:var(--кегль-лид); font-weight:600; line-height:1.5; padding-top:20px; border-top:1px solid var(--цвет-линия); margin:auto 0 0; }
+@media(max-width:899px) {
+ #экран-05 { padding:var(--отступ-секции-тихо) 20px; }
+ #экран-05 .карточки { grid-template-columns:1fr; gap:20px; }
+ #экран-05 .формат { padding:20px 24px; }
+ #экран-05 .описание { margin-bottom:20px; }
+ #экран-05 h2 { margin-bottom:28px; }
+ #экран-05 .маркер { margin-bottom:16px; }
+}
+</style>
+<div class="форматы"><h2>Другие форматы работы</h2><div class="карточки">
+<article class="формат"><span class="маркер" aria-hidden="true">01</span><h3>Стратегический разбор</h3><p class="описание">Для конкретного вопроса или ситуации, в которой нужен взгляд со стороны. Разбираем проблему, определяем возможные причины, формируем гипотезы и выбираем, <strong>что делать дальше</strong>.</p><p class="цена">от 20 000 ₽</p></article>
+<article class="формат"><span class="маркер" aria-hidden="true">02</span><h3>Перепозиционирование</h3><p class="описание">Когда изменился рынок, аудитория или сам эксперт, а прежнее позиционирование больше не помогает проекту развиваться. Определяем, в чём <strong>ценность проекта сегодня</strong>, для кого она важна, какое место занять на рынке и на каких смыслах строить дальнейшее развитие.</p><p class="цена">от 90 000 ₽</p></article>
+<article class="формат"><span class="маркер" aria-hidden="true">03</span><h3>Стратегическое сопровождение</h3><p class="описание"><strong>Внешний стратег проекта</strong> на этапе изменений. Помогаю сохранять выбранный курс, оценивать решения команды, анализировать результаты и реакцию аудитории, проверять гипотезы и корректировать стратегию по мере появления новых данных.</p><p class="цена">от 120 000 ₽ / месяц</p></article>
+</div></div>
+</section>
+<section class="блок блок--кейс ключ--наоборот тёмный фон--сетка" id="экран-06" data-тип="кейс" data-вёрстка="своя">
+<style>
+#экран-06 { padding:var(--отступ-секции) 24px; }
+#экран-06.тёмный { background:var(--цвет-тёмный-фон); color:var(--цвет-тёмный-текст); }
+#экран-06.светлый { background:var(--цвет-фон); color:var(--цвет-текст); }
+#экран-06 .история { max-width:var(--ширина); margin:auto; position:relative; }
+#экран-06 .кикер { color:var(--цвет-тёплый-мягкий); font-size:var(--кегль-кикер); background:transparent; border:0; padding:0; margin:0 0 20px; }
+#экран-06.светлый .кикер { color:var(--цвет-акцент-глубже); }
+#экран-06 h2 { font-size:var(--кегль-h2); line-height:1.2; font-weight:600; max-width:850px; margin:0 0 40px; }
+#экран-06 .разбор { display:grid; grid-template-columns:1.35fr .65fr; gap:64px; align-items:center; }
+#экран-06 .рассказ p { font-size:var(--кегль-лид); line-height:1.65; margin:0 0 28px; }
+#экран-06 .рассказ h3 { font-size:var(--кегль-кикер); color:var(--цвет-тёплый-мягкий); font-weight:600; margin:0 0 10px; }
+#экран-06 .карта { width:100%; height:auto; color:var(--цвет-тёплый-мягкий); }
+#экран-06.светлый .карта { color:var(--цвет-акцент-глубже); }
+#экран-06 .разрыв { opacity:.28; }
+#экран-06 .новый-путь { opacity:.85; }
+#экран-06 .результат { margin-top:36px; padding:28px 0; border-top:1px solid color-mix(in srgb,var(--цвет-тёплый-мягкий) 30%,transparent); border-bottom:1px solid color-mix(in srgb,var(--цвет-тёплый-мягкий) 30%,transparent); }
+#экран-06 .результат p { font-size:var(--кегль-цифра); font-weight:600; line-height:1.35; margin:0; }
+#экран-06 .вывод { max-width:920px; font-size:var(--кегль-лид); line-height:1.6; margin:28px 0 0; }
+@media(max-width:899px) {
+ #экран-06 { padding:var(--отступ-секции-тихо) 20px; }
+ #экран-06 .разбор { grid-template-columns:1fr; gap:8px; }
+ #экран-06 .рассказ p { font-size:var(--кегль-текст); margin-bottom:24px; }
+ #экран-06 .карта { max-width:280px; height:160px; margin:auto; }
+ #экран-06 h2 { margin-bottom:28px; }
+ #экран-06 .результат { margin-top:24px; padding:24px 0; }
+}
+</style>
+<div class="история"><p class="кикер">Кейс</p><h2>Когда проблема оказалась не в продвижении</h2>
+<div class="разбор"><div class="рассказ">
+<h3>Ситуация</h3><p>Клиент хотел повысить стоимость продукта и перейти в премиальный сегмент. После повышения цены продажи начали снижаться.</p>
+<h3>Что выяснили</h3><p>Заявленное премиальное позиционирование не соответствовало самому продукту и тому, за что его ценила аудитория.</p>
+<h3>Что изменили</h3><p>Снизили цену и сделали акцент на реальных сильных сторонах продукта — доступности, близости и дружелюбии.</p>
+</div><svg class="карта" viewBox="0 0 340 320" fill="none" aria-hidden="true"><path class="разрыв" d="M25 115H315" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 8"/><path class="новый-путь" d="M25 115H170Q190 115 190 140V205Q190 225 165 225H65" stroke="currentColor" stroke-width="2" stroke-dasharray="5 7"/><circle cx="25" cy="115" r="6" fill="currentColor"/><circle cx="190" cy="115" r="8" fill="currentColor"/><circle cx="65" cy="225" r="8" fill="currentColor"/><path d="M190 94V82M190 148V136M169 115H157M223 115H211" stroke="currentColor" stroke-width="1.5"/></svg></div>
+<div class="результат"><p>Результат: продажи выросли.</p></div>
+<p class="вывод">Иногда бизнесу не нужен более сильный маркетинг. Иногда нужно точнее попасть в рынок — продуктом, ценой и позиционированием.</p>
+</div>
+</section>
+<section class="блок блок--о-себе ключ--основной светлый фон--пятна" id="экран-07" data-тип="о-себе" data-вёрстка="своя">
+<style>
+#экран-07 { padding:var(--отступ-секции) 24px; }
+#экран-07.светлый { background:var(--цвет-фон); color:var(--цвет-текст); }
+#экран-07.тёмный { background:var(--цвет-тёмный-фон); color:var(--цвет-тёмный-текст); }
+#экран-07 .автор { max-width:var(--ширина); margin:auto; display:grid; grid-template-columns:.68fr 1.32fr; gap:64px; align-items:start; position:relative; }
+#экран-07 .фото { margin:0; }
+#экран-07 .фото img { width:100%; height:auto; display:block; border-radius:var(--радиус-карточки); }
+#экран-07 figcaption { font-size:var(--кегль-текст); line-height:1.6; margin-top:20px; }
+#экран-07.светлый figcaption { color:var(--цвет-текст); }
+#экран-07.светлый .имя { color:var(--цвет-текст); }
+#экран-07.тёмный .имя { color:var(--цвет-тёмный-текст); }
+#экран-07.тёмный figcaption { color:var(--цвет-тёмный-текст); }
+#экран-07 .имя { font-weight:600; display:block; margin-bottom:8px; }
+#экран-07 h2 { font-size:var(--кегль-h2); font-weight:600; line-height:1.2; margin:0 0 28px; }
+#экран-07 .рассказ p { font-size:var(--кегль-текст); line-height:1.65; margin:0 0 22px; }
+#экран-07 .рассказ .оптики { font-size:var(--кегль-лид); line-height:1.6; color:var(--цвет-акцент-глубже); }
+#экран-07.тёмный .рассказ .оптики { color:var(--цвет-тёплый-мягкий); }
+#экран-07 .цитата { border-top:1px solid var(--цвет-линия); padding:24px 0 0; margin-top:28px; font-size:var(--кегль-цифра); line-height:1.4; }
+#экран-07 .цитата::before, #экран-07 .цитата::after { content:none; }
+#экран-07 .оптики strong { display:flex; flex-wrap:wrap; gap:8px 16px; }
+#экран-07 .оптики span { padding:6px 0; border-bottom:1px solid var(--цвет-линия); }
+#экран-07 .маршрут { height:70px; width:100%; color:var(--цвет-акцент-глубже); margin-top:24px; opacity:.45; }
+@media(max-width:899px) {
+ #экран-07 { padding:var(--отступ-секции-тихо) 20px; }
+ #экран-07 .автор { grid-template-columns:1fr; gap:32px; }
+ #экран-07 .фото img { max-height:280px; object-fit:cover; object-position:center 35%; }
+ #экран-07 .цитата { font-size:var(--кегль-лид); }
+ #экран-07 .маршрут { height:40px; }
+}
+</style>
+<div class="автор"><figure class="фото"><img loading="lazy" decoding="async" src="img/irina-portrait-natural.webp" width="1254" height="1254" alt="Ирина Ведова-Вестерова"><figcaption><span class="имя">Ирина Ведова-Вестерова</span>Стратег-Навигатор по развитию экспертных проектов</figcaption><svg class="маршрут" viewBox="0 0 400 70" fill="none" aria-hidden="true"><path d="M10 55H140Q170 55 190 25H380" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 7"/><circle cx="10" cy="55" r="4" fill="currentColor"/><circle cx="380" cy="25" r="4" fill="currentColor"/></svg></figure>
+<div class="рассказ"><h2>Я соединяю цифры и людей</h2>
+<p>Мой профессиональный взгляд сформировался на пересечении:</p><p class="оптики"><strong><span>экономики</span><span>+ маркетинга</span><span>+ коммуникаций</span><span>+ психологии</span><span>+ стратегического анализа</span><span>+ AI</span></strong></p>
+<p><strong>Высшее экономическое образование</strong> дало мне привычку видеть системы, закономерности и причинно-следственные связи.</p>
+<p>Работа в маркетинге и онлайн-проектах — слышать аудиторию, анализировать её реакцию и понимать, как решения бизнеса воспринимаются людьми.</p>
+<p>Психология помогает смотреть глубже цифр: на мотивацию, доверие, ожидания и принятие решений.</p>
+<p>AI позволяет быстрее исследовать большие объёмы информации и проверять гипотезы.</p>
+<p>Но моя главная работа — не собрать больше данных. А понять, <strong>что они означают для бизнеса</strong>.</p>
+<div class="цитата"><em>Вижу смысл за сигналами и превращаю понимание в решение.</em></div></div></div>
+</section>
+<section class="блок блок--контакты ключ--наоборот тёмный фон--сетка" id="экран-08" data-тип="контакты" data-вёрстка="своя">
+<style>
+#экран-08 { padding:var(--отступ-секции) 24px; }
+#экран-08.тёмный { background:var(--цвет-тёмный-фон); color:var(--цвет-тёмный-текст); }
+#экран-08.светлый { background:var(--цвет-фон); color:var(--цвет-текст); }
+#экран-08 .финальный-маршрут { max-width:var(--ширина); margin:auto; position:relative; }
+#экран-08 .философия { max-width:860px; margin-bottom:40px; }
+#экран-08 .философия p { font-size:var(--кегль-текст); line-height:1.55; margin:0 0 16px; }
+#экран-08 .философия .мысль { font-size:var(--кегль-цифра); line-height:1.35; margin-bottom:28px; }
+#экран-08 .приглашение { display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:center; border-top:1px solid color-mix(in srgb,var(--цвет-тёплый-мягкий) 30%,transparent); padding-top:32px; }
+#экран-08 h2 { --кегль-h1:clamp(36px,3.2vw,46px); font-size:var(--кегль-h1); line-height:1.18; font-weight:600; margin:0 0 20px; }
+#экран-08 .философия .позиция { font-size:var(--кегль-лид); font-weight:600; margin:24px 0 16px; }
+#экран-08 .маршрут { width:100%; height:80px; color:var(--цвет-тёплый-мягкий); opacity:.65; }
+#экран-08.светлый .маршрут { color:var(--цвет-акцент-глубже); }
+#экран-08 .обращение { padding:32px; border-radius:var(--радиус-карточки); }
+#экран-08.тёмный .обращение { background:var(--цвет-тёмный-фон-2); color:var(--цвет-тёмный-текст); }
+#экран-08.светлый .обращение { background:var(--цвет-фон-2); color:var(--цвет-текст); }
+#экран-08 .обращение p { font-size:var(--кегль-текст); line-height:1.6; margin:0 0 20px; }
+#экран-08 .обращение .подпись { margin:24px 0 20px; }
+#экран-08 .контакт { font-size:var(--кегль-текст); line-height:1.5; overflow-wrap:anywhere; }
+#экран-08.тёмный .контакт { color:var(--цвет-тёплый-мягкий); }
+#экран-08.светлый .контакт { color:var(--цвет-акцент-глубже); }
+@media(max-width:899px) {
+ #экран-08 { padding:var(--отступ-секции-тихо) 20px; }
+ #экран-08 .приглашение { grid-template-columns:1fr; gap:24px; }
+ #экран-08 .философия { margin-bottom:24px; }
+ #экран-08 .философия p { margin-bottom:12px; line-height:1.5; }
+ #экран-08 .философия .позиция { margin:20px 0 12px; }
+ #экран-08 h2 { font-size:var(--кегль-h2); }
+ #экран-08 .философия .мысль { font-size:var(--кегль-лид); }
+ #экран-08 .обращение { padding:24px; }
+ #экран-08 .обращение .кнопка { width:100%; }
+ #экран-08 .маршрут { height:48px; }
+}
+</style>
+<div class="финальный-маршрут"><div class="философия">
+<p class="мысль"><strong>Маркетинг не должен заставлять людей хотеть ваш продукт</strong></p>
+<p>Я верю, что хороший маркетинг помогает качественному продукту встретиться с людьми, <strong>которым он действительно нужен</strong>.</p>
+<p>Поэтому иногда стратегическое решение — усилить продвижение.</p><p>А иногда — изменить продукт, цену, коммуникацию или позиционирование.</p>
+<p class="позиция"><strong>Рынок не обязан подстраиваться под прежнюю стратегию бизнеса.</strong></p><p>Но бизнес может заметить, что изменилось, — и выбрать новый маршрут.</p>
+</div><div class="приглашение"><div><h2>Обсудим, что происходит с вашим проектом</h2><svg class="маршрут" viewBox="0 0 480 80" fill="none" aria-hidden="true"><path d="M10 65H155Q185 65 205 35H450" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 7"/><circle cx="10" cy="65" r="4" fill="currentColor"/><circle cx="450" cy="35" r="7" fill="currentColor"/></svg></div>
+<div class="обращение"><p>Расскажите, что перестало работать, какие изменения вы замечаете и что хотите понять.</p><p>Разберём вашу ситуацию и определим, <strong>какой формат работы подойдёт</strong>.</p><a class="кнопка" href="https://vk.me/vedoveste">Обсудить проект</a><p class="подпись"><em>Напишите в двух-трёх предложениях, что происходит с проектом и какой вопрос сейчас волнует больше всего.</em></p><a class="контакт" href="https://vk.me/vedoveste">ВКонтакте · vk.me/vedoveste</a></div>
+</div></div>
+</section>
+</body>
+</html>
